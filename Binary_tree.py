@@ -93,23 +93,44 @@ class BinarySearchTreeNode:
         right_sum = self.right.calculate_sum() if self.right else 0
         return self.data + left_sum + right_sum
 
-    def delete(self, val):
+    def delete_by_right_min(self, val):
         if val < self.data:
             if self.left:
-                self.left.delete(val)
+                self.left = self.left.delete_by_right_min(val)
         elif val > self.data:
             if self.right:
-                self.right.delete(val)
+                self.right = self.right.delete_by_right_min(val)
         else:
             if self.left is None and self.right is None:
                 return None
-            if self.left is None:
+            elif self.left is None:
                 return self.right
-            if self.right is None:
+            elif self.right is None:
                 return self.left
+
             min_val = self.right.find_min()
             self.data = min_val
-            self.right = self.right.delete(min_val)
+            self.right = self.right.delete_by_right_min(min_val)
+        return self
+
+    def delete_by_left_max(self, val):
+        if val < self.data:
+            if self.left:
+                self.left = self.left.delete_by_left_max(val)
+        elif val > self.data:
+            if self.right:
+                self.right = self.right.delete_by_left_max(val)
+        else:
+            if self.left is None and self.right is None:
+                return None
+            elif self.left is None:
+                return self.right
+            elif self.right is None:
+                return self.right
+
+            max_val = self.left.find_max()
+            self.data = max_val
+            self.left = self.left.delete_by_left_max(max_val)
         return self
 
 
@@ -126,7 +147,7 @@ if __name__ == '__main__':
     numbers = [17, 4, 1, 20, 9, 23, 18, 34]
     numbers_tree = build_tree(numbers)
     print(numbers_tree.in_order_traversal())
-    numbers_tree.delete(20)
+    numbers_tree.delete_by_left_max(18)
     print(numbers_tree.in_order_traversal())
     print(numbers_tree.pre_order_traversal())
     print(numbers_tree.post_order_traversal())
